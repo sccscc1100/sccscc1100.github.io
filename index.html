@@ -322,7 +322,9 @@
       <div id="part2">
         <div class="shelf-hdr">
           <span style="font-size:19px">📿</span><span class="shelf-title">經文書櫃</span><span style="font-size:19px">📿</span>
-          <span style="font-size:8px"></span><span class="shelf-title">按下經文封面可以直接下載</span><span style="font-size:19px"></span>
+        </div>
+        <div class="shelf-hdr">
+        <span style="font-size:6px"></span><span class="shelf-title">按下經文封面可以直接下載</span><span style="font-size:19px"></span>
         </div>
         <div class="shelf-scroll" id="shelf-scroll">
           <div style="text-align:center;padding:40px 20px;color:#999;font-size:13px"><div style="font-size:32px;margin-bottom:12px">🪷</div>載入書櫃中…</div>
@@ -459,7 +461,7 @@ async function initMarquee(){
     el.innerHTML = html;
     requestAnimationFrame(()=>{
       const w = el.scrollWidth/2;
-      el.style.animationDuration = Math.max(10, w/70) + 's';
+      el.style.animationDuration = Math.max(10, w/90) + 's';
     });
   } catch(e){
     DBG['公告跑馬燈'] = DBG['公告跑馬燈'] || { url: URLS.marquee };
@@ -683,6 +685,7 @@ document.addEventListener('DOMContentLoaded',()=>setTimeout(boot,400));
 </script>
 </body>
 </html>
+
 
 
 
