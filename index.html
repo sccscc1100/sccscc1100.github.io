@@ -64,92 +64,135 @@
 
     #main-content{display:flex;flex-direction:column;min-height:100vh}
 
-    /* Part 1 */
-    #part1{flex:1;min-height:50vh;display:flex;flex-direction:column;background:linear-gradient(180deg,#1a0f00,#2d1a00);position:relative;overflow:hidden}
+    /* Part 1 (黑底區塊) */
+    #part1{
+      flex:1;min-height:50vh;display:flex;flex-direction:column;
+      background:linear-gradient(180deg,#1a0f00,#2d1a00);
+      position:relative;overflow:hidden;
+      padding-top: 15px; 
+      padding-bottom: 20px;
+    }
     #part1::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
 
-    /* IG (1A) */
-    #ig-section{flex:5;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px 14px 8px;position:relative;overflow:hidden}
+    /* 1A IG */
+    #ig-section{
+      flex:none; 
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      padding:10px 20px 25px; 
+      position:relative;overflow:hidden;
+    }
     .ig-glow{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 30%,rgba(201,168,76,.06),transparent 65%);pointer-events:none}
     .ig-ld{position:absolute;width:80px;height:80px;opacity:.07}
     .ig-tl{top:-8px;left:-8px;transform:rotate(40deg)}
     .ig-tr{top:-8px;right:-8px;transform:rotate(-40deg)}
     .ig-card{
       background:linear-gradient(135deg,rgba(255,255,255,.05),rgba(201,168,76,.08));
-      border:1px solid rgba(201,168,76,.25);border-radius:20px;padding:14px;
+      border:1px solid rgba(201,168,76,.25);border-radius:20px;padding:18px 16px;
       width:100%;max-width:360px;display:flex;flex-direction:column;align-items:center;
-      gap:10px;backdrop-filter:blur(10px);position:relative;z-index:1;box-shadow:0 8px 32px rgba(0,0,0,.4);
+      gap:14px;backdrop-filter:blur(10px);position:relative;z-index:1;box-shadow:0 8px 32px rgba(0,0,0,.4);
     }
     .ig-header{display:flex;align-items:center;gap:14px;width:100%}
     .ig-ring{width:68px;height:68px;border-radius:50%;flex-shrink:0;background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);padding:3px;display:flex;align-items:center;justify-content:center}
     .ig-inner{width:100%;height:100%;border-radius:50%;background:var(--deep-brown);border:2px solid var(--bg-dark);display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:26px}
     .ig-inner img{width:100%;height:100%;object-fit:cover;border-radius:50%}
-    .ig-info{flex:1;min-width:0}
-    .ig-name{font-family:'Noto Serif TC',serif;font-size:17px;font-weight:700;color:var(--gold-light);letter-spacing:1px}
-    .ig-handle{font-size:12px;color:var(--light-brown);margin-top:2px}
-    .ig-stats{display:flex;gap:14px;margin-top:6px}
-    .ig-stat-num{font-weight:700;font-size:12px;color:var(--gold)}
-    .ig-stat-lbl{font-size:10px;color:var(--light-brown)}
-    .ig-bio{font-size:12px;color:#c8b89a;line-height:1.65;text-align:center;width:100%;padding:0 2px}
+    .ig-info{flex:1;min-width:0; display:flex; flex-direction:column; justify-content:center;}
+    .ig-name{font-family:'Noto Serif TC',serif;font-size:19px;font-weight:700;color:var(--gold-light);letter-spacing:1px}
+    .ig-handle{font-size:13px;color:var(--light-brown);margin-top:4px}
+    .ig-bio{font-size:13px;color:#c8b89a;line-height:1.7;text-align:center;width:100%;padding:0 4px}
     .ig-btn{
       display:flex;align-items:center;justify-content:center;gap:8px;
       background:linear-gradient(135deg,#f09433,#dc2743 50%,#bc1888);
-      color:#fff;font-family:'Noto Sans TC',sans-serif;font-size:12px;font-weight:700;
-      padding:10px 0;border-radius:50px;border:none;cursor:pointer;text-decoration:none;
+      color:#fff;font-family:'Noto Sans TC',sans-serif;font-size:15px;font-weight:700;
+      padding:12px 0;border-radius:50px;border:none;cursor:pointer;text-decoration:none;
       letter-spacing:2px;width:100%;box-shadow:0 4px 14px rgba(220,39,67,.4);transition:transform .2s;
     }
     .ig-btn:active{transform:scale(.97)}
-    .ig-btn svg{width:17px;height:17px;fill:#fff}
+    .ig-btn svg{width:18px;height:18px;fill:#fff}
 
     /* Marquee (1B) */
     #marquee-section{
-      flex:1;min-height:32px;
+      flex:none;
+      min-height:38px;
       background:linear-gradient(90deg,rgba(201,168,76,.14),rgba(201,168,76,.07) 50%,rgba(201,168,76,.14));
       border-top:1px solid rgba(201,168,76,.2);border-bottom:1px solid rgba(201,168,76,.2);
       display:flex;align-items:center;overflow:hidden;
+      margin-bottom: 25px; 
     }
-    .mq-tag{flex-shrink:0;background:var(--gold);color:var(--deep-brown);font-size:11px;font-weight:700;padding:4px 10px;letter-spacing:1px;white-space:nowrap;z-index:2}
+    .mq-tag{flex-shrink:0;background:var(--gold);color:var(--deep-brown);font-size:12px;font-weight:700;padding:6px 12px;letter-spacing:1px;white-space:nowrap;z-index:2}
     .mq-track{flex:1;overflow:hidden}
     .mq-inner{display:flex;white-space:nowrap;animation:mqScroll 30s linear infinite}
     .mq-inner:hover{animation-play-state:paused}
     @keyframes mqScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-    .mq-item{display:inline-flex;align-items:center;padding:0 22px;font-size:12px;color:#e8d5a0;gap:5px}
+    .mq-item{display:inline-flex;align-items:center;padding:0 22px;font-size:12px;color:#e8d5a0;gap:6px}
     .mq-title{font-weight:700;color:var(--gold-light)}
     .mq-sep{display:inline-block;margin:0 14px;color:var(--gold);opacity:.5}
 
-    /* Poster (1C) */
-    #poster-section{flex:5;position:relative;overflow:hidden;min-height:160px}
+    /* Poster (1C) 修復高度塌陷並加入圓角 */
+    #poster-section{
+      flex:none; 
+      position:relative;
+      padding: 0 20px 25px; /* 左右留白，下方留白 */
+    }
+    #poster-slider {
+      width: 100%;
+      height: 220px; /* 給予明確的高度，防止圖片消失 */
+      position: relative;
+      border-radius: 12px; /* 圓角效果 */
+      overflow: hidden; /* 切除超出的直角邊緣 */
+      box-shadow: 0 6px 20px rgba(0,0,0,0.5); /* 增加陰影提升立體感 */
+      background: #1a0f00;
+    }
     .poster-slide{position:absolute;inset:0;opacity:0;transition:opacity .8s ease}
     .poster-slide.active{opacity:1}
     .poster-slide img{width:100%;height:100%;object-fit:cover;object-position:center;display:block}
     .poster-ph{width:100%;height:100%;background:linear-gradient(135deg,#1a0f00,#2d1a00);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}
     .poster-ph-icon{font-size:36px;opacity:.3}
     .poster-ph-txt{font-size:12px;color:var(--medium-brown)}
-    .poster-dots{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:5}
-    .pdot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.4);cursor:pointer;transition:all .3s}
+    
+    .poster-dots{
+      position:absolute;
+      bottom: 35px; /* 距離 section 底部的距離 (25px padding + 10px) */
+      left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:5
+    }
+    .pdot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.6);cursor:pointer;transition:all .3s; box-shadow: 0 1px 3px rgba(0,0,0,0.8);}
     .pdot.active{background:var(--gold);width:18px;border-radius:3px}
-    .poster-fade{position:absolute;bottom:0;left:0;right:0;height:55px;background:linear-gradient(transparent,rgba(26,15,0,.65));pointer-events:none;z-index:4}
+    
+    .poster-fade{
+      position:absolute;
+      bottom:0; left:0; right:0;
+      height:55px;
+      background:linear-gradient(transparent, rgba(26,15,0,.75));
+      pointer-events:none;
+      z-index:4;
+    }
 
     /* Divider */
-    #divider{height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);position:relative;z-index:2}
+    #divider{
+      height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);
+      position:relative;z-index:2;
+      margin-top: 10px;
+    }
     #divider::before{content:'☸';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:var(--cream);color:var(--gold);font-size:16px;padding:0 8px;line-height:1}
 
     /* Part 2 Bookshelf */
-    #part2{flex:1;min-height:50vh;background:linear-gradient(180deg,#fdf5e6,#f5e8d0);display:flex;flex-direction:column;overflow:hidden}
-    .shelf-hdr{background:linear-gradient(135deg,var(--deep-brown),var(--medium-brown));padding:13px 16px 10px;display:flex;align-items:center;justify-content:center;gap:12px;flex-shrink:0;position:relative}
+    #part2{
+      flex:1;min-height:50vh;background:linear-gradient(180deg,#fdf5e6,#f5e8d0);
+      display:flex;flex-direction:column;overflow:hidden;
+      padding-top: 15px; 
+    }
+    .shelf-hdr{background:linear-gradient(135deg,var(--deep-brown),var(--medium-brown));padding:15px 16px 12px;display:flex;align-items:center;justify-content:center;gap:12px;flex-shrink:0;position:relative}
     .shelf-hdr::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
-    .shelf-title{font-family:'Noto Serif TC',serif;font-size:19px;font-weight:900;color:var(--gold-light);letter-spacing:3px;text-shadow:0 2px 8px rgba(0,0,0,.5)}
-    .shelf-scroll{flex:1;overflow-y:auto;padding:0 0 24px;-webkit-overflow-scrolling:touch}
+    .shelf-title{font-family:'Noto Serif TC',serif;font-size:20px;font-weight:900;color:var(--gold-light);letter-spacing:3px;text-shadow:0 2px 8px rgba(0,0,0,.5)}
+    .shelf-scroll{flex:1;overflow-y:auto;padding:15px 0 30px;-webkit-overflow-scrolling:touch}
     .shelf-scroll::-webkit-scrollbar{display:none}
-    .shelf-row{padding:10px 8px 0}
-    /* Grid 間距微調，讓放大字體有空間 */
-    .books-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px 8px;padding:4px}
-    .shelf-plank{height:14px;margin:4px 0 20px;background:linear-gradient(180deg,#8B5E3C,#6B4423 40%,#5a3820 60%,#8B5E3C);border-radius:2px;box-shadow:0 4px 8px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.15);position:relative;overflow:hidden}
+    .shelf-row{padding:10px 12px 0} 
+    .books-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px 12px;padding:4px}
+    .shelf-plank{height:14px;margin:4px 0 25px;background:linear-gradient(180deg,#8B5E3C,#6B4423 40%,#5a3820 60%,#8B5E3C);border-radius:2px;box-shadow:0 4px 8px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.15);position:relative;overflow:hidden}
     .shelf-plank::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent,transparent 38px,rgba(0,0,0,.06) 38px,rgba(0,0,0,.06) 40px)}
     
-    .book-item{display:flex;flex-direction:column;align-items:center;cursor:pointer;text-decoration:none;-webkit-tap-highlight-color:transparent;transition:transform .2s;min-height:128px; vertical-align:top;}
+    .book-item{display:flex;flex-direction:column;align-items:center;cursor:pointer;text-decoration:none;-webkit-tap-highlight-color:transparent;transition:transform .2s;min-height:130px; vertical-align:top;}
     .book-item:active{transform:scale(.93)}
-    .book-item.empty{pointer-events:none;min-height:128px;visibility:hidden}
+    .book-item.empty{pointer-events:none;min-height:130px;visibility:hidden}
     .book-cover{width:100%;aspect-ratio:3/4;border-radius:4px 8px 8px 4px;overflow:hidden;position:relative;box-shadow:3px 3px 8px rgba(0,0,0,.3),-1px 0 0 rgba(0,0,0,.2),inset -3px 0 6px rgba(0,0,0,.15);background:#eee}
     .book-cover::before{content:'';position:absolute;left:0;top:0;bottom:0;width:7px;background:linear-gradient(90deg,rgba(0,0,0,.3),transparent);z-index:2}
     .book-cover::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.1),transparent 50%,rgba(0,0,0,.05));z-index:3}
@@ -158,28 +201,26 @@
     .book-default-icon{font-size:26px;opacity:.6}
     .book-default-title{font-family:'Noto Serif TC',serif;font-size:10px;color:var(--gold-light);text-align:center;line-height:1.4;word-break:break-all;padding:0 4px}
     
-    /* ======== 經文名稱字體放大與多行設定 ======== */
     .book-name{
       font-family:'Noto Serif TC',serif;
-      font-size:12px; /* 這裡把字體放大，原本是 10.5px */
+      font-size: 12px; 
       color:var(--deep-brown);
       text-align:center;
-      margin-top:8px; /* 稍微增加上方間距 */
-      line-height:1.3;
+      margin-top: 8px; 
+      line-height: 1.4;
       width:100%;
-      word-break:break-word; /* 允許文字自動換行 */
-      white-space:normal; /* 允許文字自然折行顯示多行 */
+      word-break:break-word;
+      white-space:normal; 
     }
     
-    /* ======== 重點推薦：粗體設定 ======== */
     .book-name.is-featured {
-      font-weight:900; /* 設定為粗體 */
+      font-weight:900; 
     }
 
-    .star{color:var(--gold);margin-right:4px;font-size:12px;vertical-align:middle;}
+    .star{color:var(--gold);margin-right:2px;font-size:12px;vertical-align:baseline;}
 
     /* Debug */
-    #dbg-btn{position:fixed;bottom:16px;right:16px;z-index:8000;width:36px;height:36px;border-radius:50%;background:rgba(61,43,31,.85);border:1px solid var(--gold);color:var(--gold);font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.4)}
+    #dbg-btn{position:fixed;bottom:16px;right:16px;z-index:8000;width:36px;height:36px;border-radius:50%;background:rgba(61,43,31,.85);border:1px solid var(--gold);color:var(--gold);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.4)}
     #dbg-overlay{position:fixed;inset:0;z-index:8500;background:rgba(0,0,0,.75);display:none;align-items:flex-end}
     #dbg-overlay.show{display:flex}
     #dbg-box{width:100%;max-width:var(--phone-max);margin:0 auto;background:#1a0f00;border-top:2px solid var(--gold);padding:16px;max-height:78vh;overflow-y:auto;font-family:monospace;font-size:11px;color:#e8d5a0}
@@ -234,17 +275,12 @@
               <div class="ig-info">
                 <div class="ig-name">曉 · 癒 Bloomie</div>
                 <div class="ig-handle">@bloomie_hk</div>
-                <div class="ig-stats">
-                  <div><div class="ig-stat-num">6.7K+</div><div class="ig-stat-lbl">追蹤者</div></div>
-                  <div><div class="ig-stat-num">24</div><div class="ig-stat-lbl">帖子</div></div>
-                  <div><div class="ig-stat-num">14</div><div class="ig-stat-lbl">追蹤中</div></div>
-                </div>
               </div>
             </div>
             <div class="ig-bio">一個90's學佛撞板日記 🍃<br>在日常中撞板，在撞板中學佛<br>簡單分享分享簡單 ☀️ Mon–Fri 7am</div>
             <a class="ig-btn" href="https://www.instagram.com/bloomie_hk" target="_blank" rel="noopener">
               <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-              追蹤 Follow
+              前往 Instagram
             </a>
           </div>
         </div>
@@ -265,7 +301,6 @@
             <div class="poster-slide active"><div class="poster-ph"><div class="poster-ph-icon">🪷</div><div class="poster-ph-txt">正在載入海報…</div></div></div>
           </div>
           <div class="poster-dots" id="poster-dots"></div>
-          <div class="poster-fade"></div>
         </div>
       </div>
 
@@ -461,6 +496,7 @@ async function initPosters(){
       dotsEl.appendChild(dot);
     });
 
+    // 將漸層也加進圓角的 slider 容器內
     const fade = document.createElement('div'); fade.className = 'poster-fade'; slider.appendChild(fade);
     if (pTotal>1) pTimer = setInterval(()=>goSlide((pIdx+1)%pTotal), 4000);
   } catch(e){
@@ -512,8 +548,6 @@ async function initBookshelf(){
     const BNAME  = ['經文名字','经文名字','經文名稱','经文名称','名字','名稱','书名','書名','title','name'];
     const BCOVER = ['經文封面圖片地址','经文封面图片地址','經文封面圖片','封面圖片','封面图片','封面','cover','image','圖片','图片'];
     const BLINK  = ['經文下載鏈接','經文下載連結','经文下载链接','下载链接','下載鏈接','下載連結','鏈接','连结','連結','link','url'];
-    
-    // 👇 加入「是否重點推薦」作為判斷候選詞
     const BSTAR  = ['是否重點推薦','是否重点推荐','重點推薦','重点推荐','推薦','推荐','featured','star','⭐'];
 
     const books = rows
@@ -573,10 +607,7 @@ async function initBookshelf(){
 
         if (b.name) {
           const nm=document.createElement('div'); 
-          
-          // 👇 判斷是否為重點推薦，給予 is-featured 類別 (會變成粗體)
           nm.className='book-name' + (b.star ? ' is-featured' : '');
-          
           nm.innerHTML = (b.star ? '<span class="star">★</span>' : '') + esc(b.name);
           el.appendChild(nm);
         }
@@ -640,5 +671,3 @@ document.addEventListener('DOMContentLoaded',()=>setTimeout(boot,400));
 </script>
 </body>
 </html>
-
-
