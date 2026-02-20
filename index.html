@@ -458,7 +458,7 @@ async function initMarquee(){
     el.innerHTML = html;
     requestAnimationFrame(()=>{
       const w = el.scrollWidth/2;
-      el.style.animationDuration = Math.max(10, w/40) + 's';
+      el.style.animationDuration = Math.max(10, w/70) + 's';
     });
   } catch(e){
     DBG['公告跑馬燈'] = DBG['公告跑馬燈'] || { url: URLS.marquee };
@@ -682,4 +682,5 @@ document.addEventListener('DOMContentLoaded',()=>setTimeout(boot,400));
 </script>
 </body>
 </html>
+
 
