@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+  <title>Bloomie HK 🌸</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet"/>
+
+  <!-- CSV 解析器 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --gold:#c9a84c;--gold-light:#f0d080;--gold-dark:#9a7a2e;
+      --cream:#fdf8f0;--deep-brown:#3d2b1f;--medium-brown:#7a5c3e;
+      --light-brown:#b8936a;--bg-dark:#1a0f00;--phone-max:430px;
+    }
+    html,body{height:100%;font-family:'Noto Sans TC',sans-serif;background:var(--bg-dark);overflow-x:hidden}
+    body::before{
+      content:'';position:fixed;inset:0;z-index:0;
+      background:radial-gradient(ellipse at 20% 50%,rgba(201,168,76,.07),transparent 50%),
+                 radial-gradient(ellipse at 80% 50%,rgba(201,168,76,.07),transparent 50%),
+                 linear-gradient(180deg,#0d0700,#1a0f00 40%,#0d0700);
+    }
+    #app{
+      position:relative;z-index:1;width:100%;max-width:var(--phone-max);
+      min-height:100vh;margin:0 auto;display:flex;flex-direction:column;
+      background:var(--cream);overflow:hidden;
+    }
+
+    /* ── LOADING ── */
+    #loading-screen{
+      position:fixed;inset:0;z-index:9999;
+      background:linear-gradient(180deg,#1a0800,#2d1500 50%,#1a0800);
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      max-width:var(--phone-max);margin:0 auto;left:50%;transform:translateX(-50%);
+      width:100%;transition:opacity .8s ease;
+    }
+    #loading-screen.fade-out{opacity:0;pointer-events:none}
+    .lotus-spin{width:110px;height:110px;animation:lspin 5s linear infinite;margin-bottom:22px}
+    @keyframes lspin{to{transform:rotate(360deg)}}
+    .loading-mantra{
+      font-family:'Noto Serif TC',serif;font-size:25px;font-weight:900;
+      color:var(--gold);letter-spacing:8px;margin-bottom:10px;
+      animation:lglow 2s ease-in-out infinite alternate;
+    }
+    @keyframes lglow{
+      from{text-shadow:0 0 8px rgba(201,168,76,.4)}
+      to{text-shadow:0 0 30px rgba(201,168,76,.95),0 0 60px rgba(201,168,76,.4)}
+    }
+    .loading-sub{font-size:12px;color:var(--light-brown);letter-spacing:3px;opacity:.9}
+    .incense-row{display:flex;gap:14px;align-items:flex-end;margin-top:32px;height:72px}
+    .stick{display:flex;flex-direction:column;align-items:center}
+    .smoke{width:2px;height:18px;background:linear-gradient(to bottom,transparent,rgba(201,168,76,.55));border-radius:2px;animation:smokeUp 2s ease-in-out infinite;transform-origin:bottom center}
+    .stick:nth-child(2) .smoke{animation-delay:.5s}
+    .stick:nth-child(3) .smoke{animation-delay:1s}
+    @keyframes smokeUp{0%{height:4px;opacity:.8;transform:scaleX(1)}60%{height:26px;opacity:.4;transform:scaleX(1.8)}100%{height:4px;opacity:0;transform:scaleX(.5)}}
+    .rod{width:3px;height:46px;background:linear-gradient(to bottom,#8b4513,#d2691e,var(--gold));border-radius:2px}
+    .base{width:10px;height:5px;background:var(--gold-dark);border-radius:2px}
+
+    #main-content{display:flex;flex-direction:column;min-height:100vh}
+
+    /* Part 1 */
+    #part1{flex:1;min-height:50vh;display:flex;flex-direction:column;background:linear-gradient(180deg,#1a0f00,#2d1a00);position:relative;overflow:hidden}
+    #part1::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+
+    /* IG (1A) */
+    #ig-section{flex:5;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px 14px 8px;position:relative;overflow:hidden}
+    .ig-glow{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 30%,rgba(201,168,76,.06),transparent 65%);pointer-events:none}
+    .ig-ld{position:absolute;width:80px;height:80px;opacity:.07}
+    .ig-tl{top:-8px;left:-8px;transform:rotate(40deg)}
+    .ig-tr{top:-8px;right:-8px;transform:rotate(-40deg)}
+    .ig-card{
+      background:linear-gradient(135deg,rgba(255,255,255,.05),rgba(201,168,76,.08));
+      border:1px solid rgba(201,168,76,.25);border-radius:20px;padding:14px;
+      width:100%;max-width:360px;display:flex;flex-direction:column;align-items:center;
+      gap:10px;backdrop-filter:blur(10px);position:relative;z-index:1;box-shadow:0 8px 32px rgba(0,0,0,.4);
+    }
+    .ig-header{display:flex;align-items:center;gap:14px;width:100%}
+    .ig-ring{width:68px;height:68px;border-radius:50%;flex-shrink:0;background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);padding:3px;display:flex;align-items:center;justify-content:center}
+    .ig-inner{width:100%;height:100%;border-radius:50%;background:var(--deep-brown);border:2px solid var(--bg-dark);display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:26px}
+    .ig-inner img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+    .ig-info{flex:1;min-width:0}
+    .ig-name{font-family:'Noto Serif TC',serif;font-size:17px;font-weight:700;color:var(--gold-light);letter-spacing:1px}
+    .ig-handle{font-size:12px;color:var(--light-brown);margin-top:2px}
+    .ig-stats{display:flex;gap:14px;margin-top:6px}
+    .ig-stat-num{font-weight:700;font-size:14px;color:var(--gold)}
+    .ig-stat-lbl{font-size:10px;color:var(--light-brown)}
+    .ig-bio{font-size:12px;color:#c8b89a;line-height:1.65;text-align:center;width:100%;padding:0 2px}
+    .ig-btn{
+      display:flex;align-items:center;justify-content:center;gap:8px;
+      background:linear-gradient(135deg,#f09433,#dc2743 50%,#bc1888);
+      color:#fff;font-family:'Noto Sans TC',sans-serif;font-size:14px;font-weight:700;
+      padding:10px 0;border-radius:50px;border:none;cursor:pointer;text-decoration:none;
+      letter-spacing:2px;width:100%;box-shadow:0 4px 14px rgba(220,39,67,.4);transition:transform .2s;
+    }
+    .ig-btn:active{transform:scale(.97)}
+    .ig-btn svg{width:17px;height:17px;fill:#fff}
+
+    /* Marquee (1B) */
+    #marquee-section{
+      flex:1;min-height:32px;
+      background:linear-gradient(90deg,rgba(201,168,76,.14),rgba(201,168,76,.07) 50%,rgba(201,168,76,.14));
+      border-top:1px solid rgba(201,168,76,.2);border-bottom:1px solid rgba(201,168,76,.2);
+      display:flex;align-items:center;overflow:hidden;
+    }
+    .mq-tag{flex-shrink:0;background:var(--gold);color:var(--deep-brown);font-size:11px;font-weight:700;padding:4px 10px;letter-spacing:1px;white-space:nowrap;z-index:2}
+    .mq-track{flex:1;overflow:hidden}
+    .mq-inner{display:flex;white-space:nowrap;animation:mqScroll 30s linear infinite}
+    .mq-inner:hover{animation-play-state:paused}
+    @keyframes mqScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+    .mq-item{display:inline-flex;align-items:center;padding:0 22px;font-size:12px;color:#e8d5a0;gap:5px}
+    .mq-title{font-weight:700;color:var(--gold-light)}
+    .mq-sep{display:inline-block;margin:0 14px;color:var(--gold);opacity:.5}
+
+    /* Poster (1C) */
+    #poster-section{flex:5;position:relative;overflow:hidden;min-height:160px}
+    .poster-slide{position:absolute;inset:0;opacity:0;transition:opacity .8s ease}
+    .poster-slide.active{opacity:1}
+    .poster-slide img{width:100%;height:100%;object-fit:cover;object-position:center;display:block}
+    .poster-ph{width:100%;height:100%;background:linear-gradient(135deg,#1a0f00,#2d1a00);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}
+    .poster-ph-icon{font-size:36px;opacity:.3}
+    .poster-ph-txt{font-size:12px;color:var(--medium-brown)}
+    .poster-dots{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:5}
+    .pdot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.4);cursor:pointer;transition:all .3s}
+    .pdot.active{background:var(--gold);width:18px;border-radius:3px}
+    .poster-fade{position:absolute;bottom:0;left:0;right:0;height:55px;background:linear-gradient(transparent,rgba(26,15,0,.65));pointer-events:none;z-index:4}
+
+    /* Divider */
+    #divider{height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);position:relative;z-index:2}
+    #divider::before{content:'☸';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:var(--cream);color:var(--gold);font-size:16px;padding:0 8px;line-height:1}
+
+    /* Part 2 Bookshelf */
+    #part2{flex:1;min-height:50vh;background:linear-gradient(180deg,#fdf5e6,#f5e8d0);display:flex;flex-direction:column;overflow:hidden}
+    .shelf-hdr{background:linear-gradient(135deg,var(--deep-brown),var(--medium-brown));padding:13px 16px 10px;display:flex;align-items:center;justify-content:center;gap:12px;flex-shrink:0;position:relative}
+    .shelf-hdr::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+    .shelf-title{font-family:'Noto Serif TC',serif;font-size:19px;font-weight:900;color:var(--gold-light);letter-spacing:3px;text-shadow:0 2px 8px rgba(0,0,0,.5)}
+    .shelf-scroll{flex:1;overflow-y:auto;padding:0 0 24px;-webkit-overflow-scrolling:touch}
+    .shelf-scroll::-webkit-scrollbar{display:none}
+    .shelf-row{padding:10px 8px 0}
+    .books-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:4px}
+    .shelf-plank{height:14px;margin:4px 0 20px;background:linear-gradient(180deg,#8B5E3C,#6B4423 40%,#5a3820 60%,#8B5E3C);border-radius:2px;box-shadow:0 4px 8px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.15);position:relative;overflow:hidden}
+    .shelf-plank::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent,transparent 38px,rgba(0,0,0,.06) 38px,rgba(0,0,0,.06) 40px)}
+    .book-item{display:flex;flex-direction:column;align-items:center;cursor:pointer;text-decoration:none;-webkit-tap-highlight-color:transparent;transition:transform .2s;min-height:128px}
+    .book-item:active{transform:scale(.93)}
+    .book-item.empty{pointer-events:none;min-height:128px;visibility:hidden}
+    .book-cover{width:100%;aspect-ratio:3/4;border-radius:4px 8px 8px 4px;overflow:hidden;position:relative;box-shadow:3px 3px 8px rgba(0,0,0,.3),-1px 0 0 rgba(0,0,0,.2),inset -3px 0 6px rgba(0,0,0,.15);background:#eee}
+    .book-cover::before{content:'';position:absolute;left:0;top:0;bottom:0;width:7px;background:linear-gradient(90deg,rgba(0,0,0,.3),transparent);z-index:2}
+    .book-cover::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.1),transparent 50%,rgba(0,0,0,.05));z-index:3}
+    .book-cover img{width:100%;height:100%;object-fit:cover;display:block}
+    .book-cover-default{width:100%;height:100%;background:linear-gradient(135deg,var(--deep-brown),var(--medium-brown));display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:8px 4px}
+    .book-default-icon{font-size:26px;opacity:.6}
+    .book-default-title{font-family:'Noto Serif TC',serif;font-size:10px;color:var(--gold-light);text-align:center;line-height:1.4;word-break:break-all;padding:0 4px}
+    .book-name{font-family:'Noto Serif TC',serif;font-size:10.5px;color:var(--deep-brown);text-align:center;margin-top:5px;line-height:1.4;width:100%;word-break:break-all}
+    .star{color:var(--gold);margin-right:2px}
+
+    /* Debug */
+    #dbg-btn{position:fixed;bottom:16px;right:16px;z-index:8000;width:36px;height:36px;border-radius:50%;background:rgba(61,43,31,.85);border:1px solid var(--gold);color:var(--gold);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.4)}
+    #dbg-overlay{position:fixed;inset:0;z-index:8500;background:rgba(0,0,0,.75);display:none;align-items:flex-end}
+    #dbg-overlay.show{display:flex}
+    #dbg-box{width:100%;max-width:var(--phone-max);margin:0 auto;background:#1a0f00;border-top:2px solid var(--gold);padding:16px;max-height:78vh;overflow-y:auto;font-family:monospace;font-size:11px;color:#e8d5a0}
+    #dbg-box h3{color:var(--gold);font-size:14px;margin-bottom:12px;font-family:'Noto Serif TC',serif}
+    .ds{margin-bottom:12px;border:1px solid rgba(201,168,76,.2);padding:8px;border-radius:6px}
+    .ds h4{color:var(--gold-light);margin-bottom:6px;font-size:12px}
+    .dok{color:#4caf50}.dfail{color:#f44336}
+    .dcols{background:rgba(255,255,255,.05);padding:6px;border-radius:4px;margin:4px 0;line-height:2;word-break:break-all}
+    .dbtn-close{width:100%;background:var(--gold);color:var(--deep-brown);border:none;padding:10px;font-weight:700;font-size:14px;border-radius:6px;margin-top:12px;cursor:pointer}
+    @media(min-width:431px){body::after{content:'🪷';position:fixed;font-size:200px;opacity:.025;top:50%;left:15%;transform:translateY(-50%);pointer-events:none;z-index:0}}
+  </style>
+</head>
+
+<body>
+  <!-- LOADING -->
+  <div id="loading-screen">
+    <svg class="lotus-spin" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <defs><radialGradient id="lg" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#f0d080"/><stop offset="100%" stop-color="#c9a84c"/></radialGradient></defs>
+      <g transform="translate(50,50)">
+        <ellipse fill="url(#lg)" rx="8" ry="20" transform="rotate(0) translate(0,-23)" opacity=".9"/>
+        <ellipse fill="url(#lg)" rx="8" ry="20" transform="rotate(45) translate(0,-23)" opacity=".8"/>
+        <ellipse fill="url(#lg)" rx="8" ry="20" transform="rotate(90) translate(0,-23)" opacity=".9"/>
+        <ellipse fill="url(#lg)" rx="8" ry="20" transform="rotate(135) translate(0,-23)" opacity=".8"/>
+        <ellipse fill="url(#lg)" rx="8" ry="20" transform="rotate(180) translate(0,-23)" opacity=".9"/>
+        <ellipse fill="url(#lg)" rx="8" ry="20" transform="rotate(225) translate(0,-23)" opacity=".8"/>
+        <ellipse fill="url(#lg)" rx="8" ry="20" transform="rotate(270) translate(0,-23)" opacity=".9"/>
+        <ellipse fill="url(#lg)" rx="8" ry="20" transform="rotate(315) translate(0,-23)" opacity=".8"/>
+        <circle fill="#c9a84c" r="10"/><circle fill="#f0d080" r="6"/>
+      </g>
+    </svg>
+    <div class="loading-mantra">南無阿彌陀佛</div>
+    <div class="loading-sub" id="loading-sub">正在讀取資料，請稍候…</div>
+    <div class="incense-row">
+      <div class="stick"><div class="smoke"></div><div class="rod"></div><div class="base"></div></div>
+      <div class="stick"><div class="smoke"></div><div class="rod"></div><div class="base"></div></div>
+      <div class="stick"><div class="smoke"></div><div class="rod"></div><div class="base"></div></div>
+    </div>
+  </div>
+
+  <!-- APP -->
+  <div id="app">
+    <div id="main-content">
+      <div id="part1">
+        <!-- 1A IG -->
+        <div id="ig-section">
+          <div class="ig-glow"></div>
+          <svg class="ig-ld ig-tl" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><g transform="translate(40,40)" fill="#c9a84c"><ellipse rx="5" ry="14" transform="rotate(0) translate(0,-17)"/><ellipse rx="5" ry="14" transform="rotate(60) translate(0,-17)"/><ellipse rx="5" ry="14" transform="rotate(120) translate(0,-17)"/><ellipse rx="5" ry="14" transform="rotate(180) translate(0,-17)"/><ellipse rx="5" ry="14" transform="rotate(240) translate(0,-17)"/><ellipse rx="5" ry="14" transform="rotate(300) translate(0,-17)"/></g></svg>
+          <svg class="ig-ld ig-tr" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><g transform="translate(40,40)" fill="#c9a84c"><ellipse rx="5" ry="14" transform="rotate(0) translate(0,-17)"/><ellipse rx="5" ry="14" transform="rotate(60) translate(0,-17)"/><ellipse rx="5" ry="14" transform="rotate(120) translate(0,-17)"/><ellipse rx="5" ry="14" transform="rotate(180) translate(0,-17)"/><ellipse rx="5" ry="14" transform="rotate(240) translate(0,-17)"/><ellipse rx="5" ry="14" transform="rotate(300) translate(0,-17)"/></g></svg>
+          <div class="ig-card">
+            <div class="ig-header">
+              <div class="ig-ring"><div class="ig-inner"><img src="https://unavatar.io/instagram/bloomie_hk" alt="bloomie_hk" onerror="this.style.display='none';this.parentElement.textContent='🌸'"/></div></div>
+              <div class="ig-info">
+                <div class="ig-name">曉 · 癒 Bloomie</div>
+                <div class="ig-handle">@bloomie_hk</div>
+                <div class="ig-stats">
+                  <div><div class="ig-stat-num">6.7K+</div><div class="ig-stat-lbl">追蹤者</div></div>
+                  <div><div class="ig-stat-num">24</div><div class="ig-stat-lbl">帖子</div></div>
+                  <div><div class="ig-stat-num">14</div><div class="ig-stat-lbl">追蹤中</div></div>
+                </div>
+              </div>
+            </div>
+            <div class="ig-bio">一個90's學佛撞板日記 🍃<br>在日常中撞板，在撞板中學佛<br>簡單分享分享簡單 ☀️ Mon–Fri 7am</div>
+            <a class="ig-btn" href="https://www.instagram.com/bloomie_hk" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+              追蹤 Follow
+            </a>
+          </div>
+        </div>
+
+        <!-- 1B Marquee -->
+        <div id="marquee-section">
+          <div class="mq-tag">📢 公告</div>
+          <div class="mq-track">
+            <div class="mq-inner" id="mq-inner">
+              <span class="mq-item"><span class="mq-title">載入中</span><span>正在獲取公告…</span></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 1C Poster -->
+        <div id="poster-section">
+          <div id="poster-slider">
+            <div class="poster-slide active"><div class="poster-ph"><div class="poster-ph-icon">🪷</div><div class="poster-ph-txt">正在載入海報…</div></div></div>
+          </div>
+          <div class="poster-dots" id="poster-dots"></div>
+          <div class="poster-fade"></div>
+        </div>
+      </div>
+
+      <div id="divider"></div>
+
+      <!-- Part 2 Bookshelf -->
+      <div id="part2">
+        <div class="shelf-hdr">
+          <span style="font-size:19px">📿</span><span class="shelf-title">經文書櫃</span><span style="font-size:19px">📿</span>
+        </div>
+        <div class="shelf-scroll" id="shelf-scroll">
+          <div style="text-align:center;padding:40px 20px;color:#999;font-size:13px"><div style="font-size:32px;margin-bottom:12px">🪷</div>載入書櫃中…</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Debug -->
+  <div id="dbg-btn" onclick="openDbg()">🔍</div>
+  <div id="dbg-overlay" onclick="if(event.target===this)closeDbg()">
+    <div id="dbg-box">
+      <h3>🔍 除錯面板</h3>
+      <div id="dbg-content">載入中…</div>
+      <button class="dbtn-close" onclick="closeDbg()">關閉</button>
+    </div>
+  </div>
+
+<script>
+const URLS = {
+  bookshelf: "https://docs.google.com/spreadsheets/d/e/2PACX-1vTTgire2J-tlwl6RD-Kgf5A-eX5URCooLsY2GYsZlzGbXl9QI3dR53DmLO2UCC0JK8lx4FCwTDmMn0c/pub?gid=0&single=true&output=csv",
+  marquee:   "https://docs.google.com/spreadsheets/d/e/2PACX-1vTTgire2J-tlwl6RD-Kgf5A-eX5URCooLsY2GYsZlzGbXl9QI3dR53DmLO2UCC0JK8lx4FCwTDmMn0c/pub?gid=1236299558&single=true&output=csv",
+  poster:    "https://docs.google.com/spreadsheets/d/e/2PACX-1vTTgire2J-tlwl6RD-Kgf5A-eX5URCooLsY2GYsZlzGbXl9QI3dR53DmLO2UCC0JK8lx4FCwTDmMn0c/pub?gid=1507389389&single=true&output=csv"
+};
+
+const DBG = {}; 
+function setLoadingText(t){ document.getElementById('loading-sub').textContent = t; }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function normKey(k){
+  if (k == null) return '';
+  return String(k).replace(/^\uFEFF/, '').replace(/\u3000/g, ' ').replace(/\s+/g, ' ').trim().toLowerCase();
+}
+function buildHeaderMap(fields){
+  const m = new Map();
+  (fields||[]).forEach(f=>{
+    const nk = normKey(f);
+    if (!m.has(nk)) m.set(nk, f);
+  });
+  return m;
+}
+function getCell(row, headerMap, candidates){
+  for (const c of candidates){
+    const key = headerMap.get(normKey(c));
+    if (key && row[key] != null && String(row[key]).trim() !== '') return String(row[key]).trim();
+  }
+  const keys = Object.keys(row||{});
+  const nkSet = new Set(candidates.map(normKey));
+  for (const k of keys){
+    if (nkSet.has(normKey(k)) && row[k] != null && String(row[k]).trim() !== '') return String(row[k]).trim();
+  }
+  return '';
+}
+function truthy(v){
+  const s = String(v ?? '').trim().toLowerCase();
+  return v === true || v === 1 || ['true','1','yes','y','是','推薦','重点','重點','✓','⭐','star'].includes(s);
+}
+
+/* ============================
+   Fetch API (雙重保證防快取)
+   ============================ */
+async function fetchCSV(label, url){
+  DBG[label] = { url, status:'loading', cols:[], count:0, sample:null, error:null };
+  let text = '';
+
+  const cacheBuster = '&_t=' + new Date().getTime();
+  const directUrl = url + cacheBuster;
+
+  try {
+    const resp = await fetch(directUrl);
+    if (!resp.ok) throw new Error('Direct fetch HTTP ' + resp.status);
+    text = await resp.text();
+  } catch(e) {
+    console.warn(`[${label}] 嘗試使用代理伺服器繞過 CORS...`);
+    try {
+      const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(directUrl);
+      const resp2 = await fetch(proxyUrl, { cache: 'no-store' });
+      if (!resp2.ok) throw new Error('Proxy fetch HTTP ' + resp2.status);
+      text = await resp2.text();
+    } catch(e2) {
+      throw new Error('無法讀取。請確認「發佈到網路」時，左側下拉選單是選擇「整份文件 (Entire Document)」而非單一工作表！');
+    }
+  }
+
+  const lowerText = text.trim().toLowerCase();
+  if (lowerText.startsWith('<!doctype html>') || lowerText.startsWith('<html')) {
+    throw new Error('被 Google 擋住了！請重新發佈並確保選了「逗號分隔值 (.csv)」');
+  }
+
+  const parsed = Papa.parse(text, { header:true, skipEmptyLines:true });
+  const cols = parsed.meta.fields || [];
+  const rows = parsed.data || [];
+
+  DBG[label] = { url, status:'ok', cols, count:rows.length, sample:rows[0]||null, error:null };
+  return { cols, rows, headerMap: buildHeaderMap(cols) };
+}
+
+/* ============================
+   Marquee
+   ============================ */
+async function initMarquee(){
+  try{
+    setLoadingText('正在載入公告…');
+    const { rows, headerMap } = await fetchCSV('公告跑馬燈', URLS.marquee);
+
+    const ID      = ['公告id','id','公告編號','编号'];
+    const TITLE   = ['公告標題','公告标题','標題','标题','title'];
+    const CONTENT = ['公告內容','公告内容','內容','内容','content'];
+
+    const items = rows
+      .map(r => ({
+        id: Number(getCell(r,headerMap,ID) || 0),
+        title: getCell(r,headerMap,TITLE),
+        content: getCell(r,headerMap,CONTENT)
+      }))
+      .filter(x => x.title || x.content)
+      .sort((a,b)=>a.id-b.id);
+
+    if (!items.length) {
+      document.getElementById('mq-inner').innerHTML = `<span class="mq-item"><span class="mq-title">暫無公告</span></span>`.repeat(4);
+      return;
+    }
+
+    let html = '';
+    for (let rep=0; rep<2; rep++){
+      items.forEach(it=>{
+        html += `<span class="mq-item">`;
+        if (it.title) html += `<span class="mq-title">${esc(it.title)}</span>`;
+        if (it.content) html += `<span>${esc(it.content)}</span>`;
+        html += `</span><span class="mq-sep">✦</span>`;
+      });
+    }
+    const el = document.getElementById('mq-inner');
+    el.innerHTML = html;
+    requestAnimationFrame(()=>{
+      const w = el.scrollWidth/2;
+      el.style.animationDuration = Math.max(10, w/40) + 's';
+    });
+  } catch(e){
+    DBG['公告跑馬燈'] = DBG['公告跑馬燈'] || { url: URLS.marquee };
+    DBG['公告跑馬燈'].status = 'error'; DBG['公告跑馬燈'].error = e.message;
+    document.getElementById('mq-inner').innerHTML = `<span class="mq-item"><span class="mq-title">公告載入失敗（按 🔍 查看）</span></span>`.repeat(4);
+  }
+}
+
+/* ============================
+   Posters
+   ============================ */
+let pIdx=0, pTotal=0, pTimer=null;
+async function initPosters(){
+  try{
+    setLoadingText('正在載入海報…');
+    const { rows, headerMap } = await fetchCSV('海報', URLS.poster);
+
+    const PID = ['海報id','海报id','id'];
+    // 增加 海報圖片地址 支援
+    const PLINK = ['海報圖片地址','海报图片地址','海報link','海报link','海報連結','海报连结','海報鏈接','海报链接','link','url','圖片','图片'];
+
+    const posters = rows
+      .map(r => ({
+        id: Number(getCell(r,headerMap,PID) || 0),
+        url: getCell(r,headerMap,PLINK)
+      }))
+      .filter(x => x.url)
+      .sort((a,b)=>a.id-b.id);
+
+    if (!posters.length) return;
+    pTotal = posters.length;
+
+    const slider = document.getElementById('poster-slider');
+    const dotsEl = document.getElementById('poster-dots');
+    slider.innerHTML = ''; dotsEl.innerHTML = '';
+
+    posters.forEach((p,i)=>{
+      const slide = document.createElement('div');
+      slide.className = 'poster-slide' + (i===0?' active':'');
+      const img = document.createElement('img');
+      img.src = p.url; img.alt = `海報 ${i+1}`; img.loading = 'lazy';
+      img.onerror = function(){ this.parentElement.innerHTML = `<div class="poster-ph"><div class="poster-ph-icon">🪷</div><div class="poster-ph-txt">圖片載入失敗</div></div>`; };
+      slide.appendChild(img); slider.appendChild(slide);
+
+      const dot = document.createElement('div');
+      dot.className = 'pdot' + (i===0?' active':'');
+      dot.onclick = ()=>goSlide(i);
+      dotsEl.appendChild(dot);
+    });
+
+    const fade = document.createElement('div'); fade.className = 'poster-fade'; slider.appendChild(fade);
+    if (pTotal>1) pTimer = setInterval(()=>goSlide((pIdx+1)%pTotal), 4000);
+  } catch(e){
+    DBG['海報'] = DBG['海報'] || { url: URLS.poster };
+    DBG['海報'].status = 'error'; DBG['海報'].error = e.message;
+  }
+}
+
+function goSlide(idx){
+  document.querySelectorAll('.poster-slide').forEach((s,i)=>s.classList.toggle('active', i===idx));
+  document.querySelectorAll('.pdot').forEach((d,i)=>d.classList.toggle('active', i===idx));
+  pIdx=idx;
+}
+
+let tsX=0;
+document.addEventListener('DOMContentLoaded', ()=>{
+  const sec = document.getElementById('poster-section');
+  sec.addEventListener('touchstart', e=>tsX=e.touches[0].clientX, {passive:true});
+  sec.addEventListener('touchend', e=>{
+    if(!pTotal) return;
+    const dx = e.changedTouches[0].clientX - tsX;
+    if(Math.abs(dx)>40){
+      goSlide(dx<0 ? (pIdx+1)%pTotal : (pIdx-1+pTotal)%pTotal);
+      if(pTimer){ clearInterval(pTimer); pTimer=setInterval(()=>goSlide((pIdx+1)%pTotal), 4000); }
+    }
+  }, {passive:true});
+});
+
+/* ============================
+   Bookshelf
+   ============================ */
+function defCover(title){
+  const d=document.createElement('div'); d.className='book-cover-default';
+  d.innerHTML=`<div class="book-default-icon">📖</div>${title?`<div class="book-default-title">${esc(title)}</div>`:''}`;
+  return d;
+}
+function emptySlot(){ const d=document.createElement('div'); d.className='book-item empty'; return d; }
+function noDataMsg(msg){
+  return `<div style="text-align:center;padding:40px 20px;color:#999;font-size:13px;line-height:1.6"><div style="font-size:32px;margin-bottom:12px">🙏</div>${esc(msg)}</div>`;
+}
+
+async function initBookshelf(){
+  const container = document.getElementById('shelf-scroll');
+  try{
+    setLoadingText('正在載入經文書櫃…');
+    const { rows, headerMap } = await fetchCSV('經文書櫃', URLS.bookshelf);
+
+    const BID    = ['經文id','经文id','id','編號','编号'];
+    const BNAME  = ['經文名字','经文名字','經文名稱','经文名称','名字','名稱','书名','書名','title','name'];
+    
+    // 👇 這裡加入了「經文封面圖片地址」
+    const BCOVER = ['經文封面圖片地址','经文封面图片地址','經文封面圖片','封面圖片','封面图片','封面','cover','image','圖片','图片'];
+    
+    const BLINK  = ['經文下載鏈接','經文下載連結','经文下载链接','下载链接','下載鏈接','下載連結','鏈接','连结','連結','link','url'];
+    const BSTAR  = ['重點推薦','重点推荐','推薦','推荐','featured','star','⭐'];
+
+    const books = rows
+      .map(r => ({
+        idRaw: getCell(r,headerMap,BID),
+        id: Number(getCell(r,headerMap,BID) || NaN),
+        name: getCell(r,headerMap,BNAME),
+        cover: getCell(r,headerMap,BCOVER),
+        link: getCell(r,headerMap,BLINK),
+        star: truthy(getCell(r,headerMap,BSTAR))
+      }))
+      .filter(b => b.idRaw !== ''); 
+
+    const anyId = books.some(b => !Number.isNaN(b.id));
+    if (!anyId) { container.innerHTML = noDataMsg('讀取成功，但找不到「經文ID」欄位，請按 🔍 確認'); return; }
+
+    books.sort((a,b)=> (Number.isNaN(a.id)?999999:a.id) - (Number.isNaN(b.id)?999999:b.id));
+
+    const normalized = books.map(b=>{
+      const hasAny = (b.name || b.cover || b.link);
+      if (!hasAny && !Number.isNaN(b.id)) return { empty:true };
+      return { ...b, empty:false };
+    });
+
+    const chunks = [];
+    for (let i=0;i<normalized.length;i+=3) chunks.push(normalized.slice(i,i+3));
+    container.innerHTML = '';
+
+    chunks.forEach(chunk=>{
+      while(chunk.length<3) chunk.push({empty:true});
+      const rowEl=document.createElement('div'); rowEl.className='shelf-row';
+      const grid=document.createElement('div'); grid.className='books-grid';
+
+      chunk.forEach(b=>{
+        if (b.empty) { grid.appendChild(emptySlot()); return; }
+        const el=document.createElement(b.link ? 'a' : 'div');
+        el.className='book-item';
+        if (b.link) { el.href=b.link; el.target='_blank'; el.rel='noopener'; }
+
+        el.addEventListener('click', function(){
+          const cw=this.querySelector('.book-cover'); if(!cw)return;
+          const rip=document.createElement('span');
+          rip.style.cssText='position:absolute;left:50%;top:50%;width:0;height:0;background:rgba(201,168,76,.45);border-radius:50%;animation:ripA .6s ease forwards;pointer-events:none;z-index:10;transform:translate(-50%,-50%)';
+          cw.appendChild(rip); setTimeout(()=>rip.remove(),700);
+        });
+
+        const cw=document.createElement('div'); cw.className='book-cover';
+        if (b.cover) {
+          const img=document.createElement('img');
+          img.src=b.cover; img.alt=b.name||''; img.loading='lazy';
+          img.onerror=function(){ this.replaceWith(defCover(b.name)); };
+          cw.appendChild(img);
+        } else {
+          cw.appendChild(defCover(b.name));
+        }
+        el.appendChild(cw);
+
+        if (b.name) {
+          const nm=document.createElement('div'); nm.className='book-name';
+          nm.innerHTML = (b.star ? '<span class="star">★</span>' : '') + esc(b.name);
+          el.appendChild(nm);
+        }
+        grid.appendChild(el);
+      });
+      rowEl.appendChild(grid);
+      const plank=document.createElement('div'); plank.className='shelf-plank';
+      rowEl.appendChild(plank);
+      container.appendChild(rowEl);
+    });
+
+  } catch(e){
+    DBG['經文書櫃'] = DBG['經文書櫃'] || { url: URLS.bookshelf };
+    DBG['經文書櫃'].status = 'error'; DBG['經文書櫃'].error = e.message;
+    container.innerHTML = noDataMsg('書櫃載入失敗（按右下角 🔍 查看原因）');
+  }
+}
+
+/* ============================
+   Debug panel
+   ============================ */
+function openDbg(){
+  const box = document.getElementById('dbg-content');
+  const order = ['公告跑馬燈','海報','經文書櫃'];
+  let html='';
+  order.forEach(name=>{
+    const d = DBG[name];
+    if(!d){ html += `<div class="ds"><h4>${name}</h4><div class="dfail">尚未載入</div></div>`; return; }
+    const ok = d.status === 'ok';
+    html += `<div class="ds">
+      <h4>${ok?'✅':'❌'} ${name}</h4>
+      <div>狀態: <span class="${ok?'dok':'dfail'}">${esc(d.status)}</span></div>`;
+    if(d.error) html += `<div style="color:#ff9999;margin-top:4px;word-break:break-all">錯誤原因:<br>${esc(d.error)}</div>`;
+    if(d.cols && d.cols.length) html += `<div style="margin-top:6px;color:#aaa">解析到的欄位名稱:</div>
+      <div class="dcols">${d.cols.map((c,i)=>`[${i}] "${esc(c)}"`).join('<br>')}</div>`;
+    if(d.sample) html += `<div style="margin-top:4px;color:#aaa">第一行資料:</div>
+      <div class="dcols" style="font-size:10px">${esc(JSON.stringify(d.sample))}</div>`;
+    html += `</div>`;
+  });
+  box.innerHTML = html || '沒有資料';
+  document.getElementById('dbg-overlay').classList.add('show');
+}
+function closeDbg(){ document.getElementById('dbg-overlay').classList.remove('show'); }
+
+const rs=document.createElement('style');
+rs.textContent='@keyframes ripA{from{width:0;height:0;opacity:1}to{width:110px;height:110px;opacity:0}}';
+document.head.appendChild(rs);
+
+/* ============================
+   Boot
+   ============================ */
+async function boot(){
+  try{ await Promise.allSettled([initMarquee(), initPosters(), initBookshelf()]); } 
+  finally {
+    const loader=document.getElementById('loading-screen');
+    loader.classList.add('fade-out');
+    setTimeout(()=>loader.remove(), 950);
+  }
+}
+document.addEventListener('DOMContentLoaded',()=>setTimeout(boot,400));
+</script>
+</body>
+</html>
